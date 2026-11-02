@@ -1,0 +1,4 @@
+rfdetr[train,loggers,onnx]==1.11.2
+onnxruntime
+pillow
+numpy

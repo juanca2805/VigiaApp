@@ -1,0 +1,11 @@
+key.pem
+cert.pem
+servidor.js
+node_modules/
+.git/
+# lo que no hace falta en la imagen de Cloud Run (solo se sirven index.html, app.js, detector.js, manifest.json y modelo/)
+datos/
+entrenamiento/
+docs/
+*.md
+.gitignore

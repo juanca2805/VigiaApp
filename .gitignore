@@ -1,0 +1,17 @@
+# secretos y dependencias
+key.pem
+cert.pem
+node_modules/
+__pycache__/
+
+# modelo entrenado: pesa ~120 MB (GitHub limita a 100 MB por archivo). Ver docs/modelo-y-entrenamiento.md
+modelo/*.onnx
+*.onnx
+
+# datos pesados (se regeneran con los scripts de entrenamiento/, ver datos/README.md)
+datos/*
+!datos/README.md
+!datos/fotos_para_probar_v2/
+datos/fotos_para_probar_v2/**/*.zip
+*.zip
+*.tar

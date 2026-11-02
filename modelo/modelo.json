@@ -1,0 +1,26 @@
+{
+  "archivo": "rfdetr-small.onnx",
+  "clases": [
+    "heces",
+    "basura"
+  ],
+  "entrada": {
+    "nombre": "input",
+    "forma": [
+      1,
+      3,
+      512,
+      512
+    ]
+  },
+  "salidas": [
+    "dets",
+    "labels"
+  ],
+  "umbral": 0.4,
+  "nota": "Entrada RGB float32 NCHW normalizada con media ImageNet [0.485,0.456,0.406] y desv [0.229,0.224,0.225]. El formato de las salidas (cajas/logits) se confirma con 'salidas' al integrar en la app.",
+  "umbrales": {
+    "heces": 0.5,
+    "basura": 0.4
+  }
+}
