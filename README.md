@@ -72,9 +72,13 @@ Más detalle (firewall, Cloud Run) en [docs/despliegue.md](docs/despliegue.md).
 
 ### El modelo no está en git
 
-`modelo/rfdetr-small.onnx` pesa unos 120 MB y GitHub rechaza archivos de más de 100 MB. Opciones:
-descargarlo de la sección *Releases* del repositorio (si se publica ahí), usar Git LFS, o
-reentrenarlo siguiendo [entrenamiento/README.md](entrenamiento/README.md). Sin el `.onnx`, la app cae al
+`modelo/rfdetr-small.onnx` pesa unos 120 MB y GitHub rechaza archivos de más de 100 MB, por eso está en la
+[Release `modelo-v2`](https://github.com/juanca2805/VigiaApp/releases/tag/modelo-v2). Descarga `rfdetr-small.onnx`
+y `modelo.json` y déjalos en `modelo/`, o con la CLI de GitHub:
+```bash
+gh release download modelo-v2 --repo juanca2805/VigiaApp --dir modelo --clobber
+```
+También puedes reentrenarlo siguiendo [entrenamiento/README.md](entrenamiento/README.md). Sin el `.onnx`, la app cae al
 **modo prueba** (COCO-SSD: detecta botellas, vasos y mochilas como "basura" para validar el flujo).
 
 ## Limitaciones
