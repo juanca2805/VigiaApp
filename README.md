@@ -106,3 +106,13 @@ multas en propiedad horizontal exigen debido proceso (Ley 675 de 2001). Más en
 - Datos de basura: **TACO** (Proença y Simões), CC BY 4.0, <https://tacodataset.org>, doi:10.5281/zenodo.3587843.
 - Librerías en el navegador: TensorFlow.js y COCO-SSD (Apache 2.0), onnxruntime-web (MIT).
 - Este repositorio todavía no tiene licencia propia: defínela antes de publicarlo.
+
+## Integración con el panel de Condo Manager
+
+El panel de seguridad registra cada celular como una cámara con su ubicación y genera un enlace de vinculación:
+
+```
+https://<vigia>/?camara=Pasillo%20piso%203&hook=https%3A%2F%2F<api>%2Fsecurity%2Freports%3Ftoken%3D<token>
+```
+
+Al abrirlo, la app guarda el nombre de la cámara y el webhook y limpia la dirección. Cada alerta se envía al panel con su foto y, mientras la cámara está activa, un latido cada 30 s la mantiene "en línea". También puede configurarse a mano en Ajustes (Camara y Webhook).
