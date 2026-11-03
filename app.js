@@ -40,7 +40,35 @@ $('sConf').oninput = e => { cfg.conf = +e.target.value; pintarAjustes(); guardar
 $('sPers').oninput = e => { cfg.pers = +e.target.value; pintarAjustes(); guardarCfg(); };
 $('sDist').oninput = e => { cfg.dist = +e.target.value; pintarAjustes(); guardarCfg(); };
 $('sHook').oninput = e => { cfg.hook = e.target.value.trim(); guardarCfg(); };
+
+// Enlace de vinculación del panel: ?camara=Pasillo%203&hook=https://…/security/reports?token=…
+// Deja el celular configurado y limpia la dirección para no dejar el token a la vista.
+(function aplicarEnlace() {
+  const q = new URLSearchParams(location.search);
+  const camara = q.get('camara'), hook = q.get('hook');
+  if (camara === null && hook === null) return;
+  if (camara) cfg.camara = camara.trim();
+  if (hook) cfg.hook = hook.trim();
+  guardarCfg();
+  history.replaceState(null, '', location.pathname);
+})();
 pintarAjustes();
+
+// Latido al panel: lo mantiene "en línea". Solo si el webhook es del panel (…/security/reports).
+const LATIDO_MS = 30000;
+function urlLatido() {
+  try {
+    const u = new URL(cfg.hook);
+    if (!u.pathname.endsWith('/security/reports')) return null;
+    u.pathname = u.pathname.replace(/reports$/, 'heartbeat');
+    return u.toString();
+  } catch (e) { return null; }
+}
+function latido() {
+  const url = urlLatido();
+  if (url && stream) fetch(url, { method: 'POST' }).catch(() => {});
+}
+setInterval(latido, LATIDO_MS);
 
 // ---------- Cámara y modelo ----------
 async function iniciarCamara() {
@@ -80,6 +108,7 @@ async function arrancar() {
     await iniciarCamara();
     $('estado').textContent = propio ? 'Modelo propio: ' + propio.meta.clases.join(', ') : 'Modo prueba (COCO-SSD)';
     $('btnIniciar').style.display = 'none';
+    latido();
     bucle();
   } catch (e) {
     $('estado').textContent = 'Error: ' + (e.message || e);
