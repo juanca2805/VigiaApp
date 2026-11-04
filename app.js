@@ -250,7 +250,8 @@ function evidencia(personas, objeto) {
 function emitir(evento, a) {
   const registro = { ...a, evento };
   eventos.push(registro);
-  if (cfg.hook) {
+  // El panel crea un reporte nuevo por cada POST: el cierre no se le envía hasta conocer su endpoint de "retirado".
+  if (cfg.hook && !(evento === 'cerrada' && urlLatido())) {
     const body = { ...registro };
     fetch(cfg.hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {});
   }
