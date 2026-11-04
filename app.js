@@ -219,7 +219,7 @@ function actualizarTracks(objetos, personas, ahora) {
 }
 
 // ---------- Alertas ----------
-function evidencia(personas) {
+function evidencia(personas, objeto) {
   const c = document.createElement('canvas');
   const w = 480, h = Math.round(480 * video.videoHeight / video.videoWidth);
   c.width = w; c.height = h;
@@ -233,6 +233,16 @@ function evidencia(personas) {
     x.imageSmoothingEnabled = false;
     x.drawImage(t, 0, 0, 6, 6, x0, y0, bw, bh);
     x.imageSmoothingEnabled = true;
+  }
+  if (objeto) {                          // resalta lo que generó la alerta
+    const [x0, y0, x1, y1] = objeto.caja.map((v, i) => v * (i % 2 ? h : w));
+    x.lineWidth = 4; x.strokeStyle = '#ef4444';
+    x.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    x.font = 'bold 16px system-ui';
+    const txt = objeto.clase.toUpperCase();
+    const tw = x.measureText(txt).width + 10, ty = y0 >= 22 ? y0 - 22 : y0;
+    x.fillStyle = '#ef4444'; x.fillRect(x0, ty, tw, 22);
+    x.fillStyle = '#fff'; x.fillText(txt, x0 + 5, ty + 16);
   }
   return c.toDataURL('image/jpeg', 0.6);
 }
@@ -251,7 +261,7 @@ function abrirAlerta(t, quietoS, personas) {
     id: 'A-' + Date.now(), evento: 'alerta', camara: cfg.camara, clase: t.clase,
     hora: new Date().toISOString(), persistio_s: Math.round(quietoS), respuesta_s: null,
     confianza: +t.conf.toFixed(2), caja: t.caja.map(v => +v.toFixed(3)),
-    imagen: evidencia(personas), estado: 'abierta', _t0: Date.now()
+    imagen: evidencia(personas, t), estado: 'abierta', _t0: Date.now()
   };
   t.alerta = a; alertas.unshift(a);
   emitir('alerta', a);
