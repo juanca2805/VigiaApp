@@ -213,7 +213,7 @@ function actualizarTracks(objetos, personas, ahora) {
   tracks = tracks.filter(t => {
     if (usados.has(t)) return true;
     if ((ahora - t.visto) / 1000 < CIERRE_AUSENTE_S) return true;
-    if (t.alerta && t.alerta.estado !== 'descartada') cerrarAlerta(t.alerta, ahora);
+    if (t.alerta && t.alerta.estado !== 'descartada') cerrarAlerta(t.alerta, ahora, personas);
     return false;
   });
 }
@@ -269,9 +269,12 @@ function abrirAlerta(t, quietoS, personas) {
   pintarAlertas();
 }
 
-function cerrarAlerta(a, ahora) {
+function cerrarAlerta(a, ahora, personas = []) {
   a.estado = a.estado === 'aseo enviado' ? 'atendida' : 'cerrada (objeto desapareció)';
   a.respuesta_s = Math.round((ahora - a._t0) / 1000);
+  a.imagen_antes = a.imagen;              // foto con el objeto
+  a.imagen = evidencia(personas);         // foto actual, ya sin el objeto
+  a.imagen_despues = a.imagen;
   emitir('cerrada', a);
   pintarAlertas();
 }
@@ -296,7 +299,7 @@ function pintarAlertas() {
     return `<div class="alerta ${activa || enviada ? '' : 'cerrada'}">
       <strong>${a.clase.toUpperCase()} ${Math.round(a.confianza * 100)}%</strong> · ${a.camara}
       <small>${new Date(a.hora).toLocaleTimeString()} · quieto ${a.persistio_s}s · ${a.estado}${a.respuesta_s != null ? ' · respuesta ' + a.respuesta_s + 's' : ''}</small>
-      <img src="${a.imagen}" alt="evidencia">
+      ${a.imagen_antes ? `<div class="antesdespues"><figure><img src="${a.imagen_antes}" alt="con el objeto"><figcaption>Antes</figcaption></figure><figure><img src="${a.imagen_despues}" alt="sin el objeto"><figcaption>Después</figcaption></figure></div>` : `<img src="${a.imagen}" alt="evidencia">`}
       ${(activa || enviada) && !urlLatido() ? `<button class="p" ${enviada ? 'disabled' : ''} onclick="accion('${a.id}','aseo')">Enviar aseo</button>
       <button class="d" onclick="accion('${a.id}','descartar')">Descartar</button>` : ''}
     </div>`;
