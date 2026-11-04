@@ -250,9 +250,8 @@ function evidencia(personas, objeto) {
 function emitir(evento, a) {
   const registro = { ...a, evento };
   eventos.push(registro);
-  // El panel crea un reporte por cada POST: no se le manda 'cerrada' (duplicaría la alerta); recibe 'limpio' como alarma nueva.
-  if (cfg.hook && !(evento === 'cerrada' && urlLatido())) {
-    const body = { ...registro };
+  if (cfg.hook) {
+    const { imagen_antes, imagen_despues, ...body } = registro;   // el panel solo guarda la foto de 'alerta'
     fetch(cfg.hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {});
   }
 }
@@ -277,10 +276,6 @@ function cerrarAlerta(a, ahora, personas = []) {
   a.imagen = evidencia(personas);         // foto actual, ya sin el objeto
   a.imagen_despues = a.imagen;
   emitir('cerrada', a);
-  // Alarma nueva para el panel: el sitio quedó limpio, con la foto sin el objeto
-  const { imagen_antes, imagen_despues, _t0, ...base } = a;
-  emitir('limpio', { ...base, id: 'L-' + Date.now(), alerta_id: a.id, hora: new Date().toISOString(),
-    estado: 'limpio', persistio_s: 0, respuesta_s: a.respuesta_s, imagen: a.imagen_despues, _t0: Date.now() });
   pintarAlertas();
 }
 
