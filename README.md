@@ -116,3 +116,5 @@ https://<vigia>/?camara=Pasillo%20piso%203&hook=https%3A%2F%2F<api>%2Fsecurity%2
 ```
 
 Al abrirlo, la app guarda el nombre de la cámara y el webhook y limpia la dirección. Cada alerta se envía al panel con su foto y, mientras la cámara está activa, un latido cada 30 s la mantiene "en línea". También puede configurarse a mano en Ajustes (Camara y Webhook).
+
+Con el webhook del panel, los botones «Enviar aseo» y «Descartar» no aparecen en el celular: esa decisión se toma en el panel. La app pide mantener la pantalla encendida mientras la cámara está activa.

@@ -70,6 +70,19 @@ function latido() {
 }
 setInterval(latido, LATIDO_MS);
 
+// Pantalla encendida: con la pantalla apagada el navegador pausa la cámara y el celular deja de reportar.
+let pantalla = null;
+async function mantenerPantalla() {
+  try {
+    if ('wakeLock' in navigator && !pantalla) {
+      pantalla = await navigator.wakeLock.request('screen');
+      pantalla.addEventListener('release', () => { pantalla = null; });
+    }
+  } catch (e) { pantalla = null; }
+}
+// el navegador libera el bloqueo al ocultar la pestaña; se pide de nuevo al volver
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && stream) mantenerPantalla(); });
+
 // ---------- Cámara y modelo ----------
 async function iniciarCamara() {
   if (stream) stream.getTracks().forEach(t => t.stop());
@@ -108,6 +121,7 @@ async function arrancar() {
     await iniciarCamara();
     $('estado').textContent = propio ? 'Modelo propio: ' + propio.meta.clases.join(', ') : 'Modo prueba (COCO-SSD)';
     $('btnIniciar').style.display = 'none';
+    mantenerPantalla();
     latido();
     bucle();
   } catch (e) {
@@ -273,7 +287,7 @@ function pintarAlertas() {
       <strong>${a.clase.toUpperCase()} ${Math.round(a.confianza * 100)}%</strong> · ${a.camara}
       <small>${new Date(a.hora).toLocaleTimeString()} · quieto ${a.persistio_s}s · ${a.estado}${a.respuesta_s != null ? ' · respuesta ' + a.respuesta_s + 's' : ''}</small>
       <img src="${a.imagen}" alt="evidencia">
-      ${activa || enviada ? `<button class="p" ${enviada ? 'disabled' : ''} onclick="accion('${a.id}','aseo')">Enviar aseo</button>
+      ${(activa || enviada) && !urlLatido() ? `<button class="p" ${enviada ? 'disabled' : ''} onclick="accion('${a.id}','aseo')">Enviar aseo</button>
       <button class="d" onclick="accion('${a.id}','descartar')">Descartar</button>` : ''}
     </div>`;
   }).join('');
